@@ -1,8 +1,12 @@
-import { twitter } from "./keys";
 
-require("dotenv").config();
+var fs = require("fs");
+var request = require("request");
+var dotenv = require("dotenv").config();
 
-var spotify = new spotify(keys.spotify);
-var client = new twitter(keys.twitter);
+var twitter = require("twitter");
+var spotify = require("node-spotify-api");
 
-console.log("this works")
+var keys = require("./keys.js");
+
+console.log("this works");
+
