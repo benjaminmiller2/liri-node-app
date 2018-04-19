@@ -19,11 +19,13 @@ let twitter = new Twitter(keys.twitter);
 //console.log(twitter);
 
 
-
-
 let array = process.argv;
-let command = process.argv[2];
-let input = process.argv[3];
+let command = array[2];
+let input = "";
+
+for (var j = 3; j < array.length; j++) {
+	input += array[j] + ' ';
+};
 
 switch(command){
     
