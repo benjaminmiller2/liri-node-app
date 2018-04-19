@@ -26,15 +26,23 @@ let command = process.argv[2];
 let input = process.argv[3];
 
 switch(command){
+    
     case "spotify-this-song":
     if(input){
         spotifySearch(input)
     }else{
         console.log("error")
     };
+    break;
 
     case "my-tweets":
     tweetLog();
+    break;
+
+    case "movie-this":
+    imdbData(input);
+    break;
+
 }
 
 
@@ -56,10 +64,25 @@ function spotifySearch(){
 function tweetLog(){
 var params = {screen_name: 'reticent_ben'};
 twitter.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-      for(var i = 0; i<tweets.length; i++){
+if (!error) {
+    for(var i = 0; i<tweets.length; i++){
         console.log(tweets[i].text, tweets[i].created_at); 
-      }
+    }
+}
+});
+}
+
+function imdbData(){
+request("http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
+
+  // If the request is successful (i.e. if the response status code is 200)
+  if (!error && response.statusCode === 200) {
+
+    // Parse the body of the site and recover just the imdbRating
+    // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
+    let flick = JSON.parse(body);
+    console.log(flick.Title, flick.Year, flick.imdbRating, flick.Ratings[1].Value, flick.Country,
+        flick.Language, flick.Plot, flick.Actors);
   }
 });
 }
