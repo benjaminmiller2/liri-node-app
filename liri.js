@@ -43,6 +43,10 @@ switch(command){
     imdbData(input);
     break;
 
+    case "do-what-it-says":
+    machineOverlord();
+    break;
+
 }
 
 
@@ -85,4 +89,19 @@ request("http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy", 
         flick.Language, flick.Plot, flick.Actors);
   }
 });
+}
+
+function machineOverlord(){
+fs.readFile("random.txt", "utf8", function(error, data) {
+
+    console.log(data);
+    var dataArr = data.split(",");
+      console.log(dataArr);
+
+if(dataArr[0] === "spotify-this-song"){
+input = dataArr[1];
+spotifySearch();
+}
+
+  });
 }
