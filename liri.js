@@ -13,16 +13,33 @@ console.log("this works");
 //Establish the Spotify funcitonality
 //Use a JS Constructor to create new objects
 var spotify = new Spotify(keys.spotify);
-console.log(spotify)
+//console.log(spotify);
+
+let twitter = new Twitter(keys.twitter);
+//console.log(twitter);
 
 
 
-let nArray = process.argv;
-let command;
-let song = process.argv[2];
+
+let array = process.argv;
+let command = process.argv[2];
+let input = process.argv[3];
+
+switch(command){
+    case "spotify-this-song":
+    if(input){
+        spotifySearch(input)
+    }else{
+        console.log("error")
+    };
+
+    case "my-tweets":
+    tweetLog();
+}
+
 
 function spotifySearch(){
-    spotify.search({ type: "track", query: song, limit: 5 }, function(err, data){
+    spotify.search({ type: "track", query: input, limit: 5 }, function(err, data){
         let song = data.tracks.items[0];
         if(!err){
             console.log(song.artists[0].name);
@@ -36,5 +53,13 @@ function spotifySearch(){
     })
 }
 
-
-spotifySearch();
+function tweetLog(){
+var params = {screen_name: 'reticent_ben'};
+twitter.get('statuses/user_timeline', params, function(error, tweets, response) {
+  if (!error) {
+      for(var i = 0; i<tweets.length; i++){
+        console.log(tweets[i].text, tweets[i].created_at); 
+      }
+  }
+});
+}
