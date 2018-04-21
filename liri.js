@@ -1,65 +1,73 @@
 
 //requirements
-var fs = require("fs");
-var request = require("request");
-var dotenv = require("dotenv").config();
-var Twitter = require("twitter");
-var Spotify = require("node-spotify-api");
-var keys = require("./keys.js");
+let fs = require("fs");
+let request = require("request");
+let dotenv = require("dotenv").config();
+let Twitter = require("twitter");
+let Spotify = require("node-spotify-api");
+let keys = require("./keys.js");
+//console.log("this works");
 
-//test that the requirments are working
-console.log("this works");
-
-//Establish the Spotify funcitonality
 //Use a JS Constructor to create new objects
-var spotify = new Spotify(keys.spotify);
+let spotify = new Spotify(keys.spotify);
 //console.log(spotify);
-
 let twitter = new Twitter(keys.twitter);
 //console.log(twitter);
 
-
+//global variables
 let array = process.argv;
 let command = array[2];
 let input = "";
 
-for (var j = 3; j < array.length; j++) {
-	input += array[j] + ' ';
-};
-
-switch(command){
-    
-    case "spotify-this-song":
-    if(input){
-        spotifySearch(input)
-    }else{
-        console.log("error")
+    for (var j = 3; j < array.length; j++) {
+	    input += array[j] + ' ';
     };
+
+//Switch statements to determine function upon command line input
+switch(command){
+
+    case "spotify-this-song":
+        if(input){
+        spotifySearch(input)
+        }
+        else{
+            input = "the sign ace of base";
+            spotifySearch(input)
+        };
     break;
 
     case "my-tweets":
-    tweetLog();
+        tweetLog();
     break;
 
     case "movie-this":
-    imdbData(input);
+        if(input){
+        imdbData(input); 
+        }
+        else{
+            input = "mr nobody";
+            imdbData(input);
+        }
     break;
 
     case "do-what-it-says":
-    machineOverlord();
+        machineOverlord();
     break;
-
-}
-
+};
 
 function spotifySearch(){
     spotify.search({ type: "track", query: input, limit: 5 }, function(err, data){
         let song = data.tracks.items[0];
         if(!err){
-            console.log(song.artists[0].name);
-            console.log(song.album.name);
-            console.log(song.preview_url);
-            console.log(song.name);
+            console.log("---------------------------------");
+            console.log("Song title: " + song.name);
+            console.log("---------------------------------");
+            console.log("Artist's name: " + song.artists[0].name);
+            console.log("---------------------------------");
+            console.log("Album title: " + song.album.name);
+            console.log("---------------------------------");
+            console.log("Preview: " + song.preview_url);
+            console.log("---------------------------------"); 
         }
         else{
             return console.log("Error occured: " + err);
@@ -68,42 +76,54 @@ function spotifySearch(){
 }
 
 function tweetLog(){
-var params = {screen_name: 'reticent_ben'};
-twitter.get('statuses/user_timeline', params, function(error, tweets, response) {
-if (!error) {
-    for(var i = 0; i<tweets.length; i++){
-        console.log(tweets[i].text, tweets[i].created_at); 
-    }
-}
-});
+    let params = {screen_name: 'reticent_ben'};
+        twitter.get('statuses/user_timeline', params, function(error, tweets, response) {
+            if (!error) {
+                for(var i = 0; i<tweets.length; i++){
+                    console.log("---------------------------------");
+                    console.log("'" + tweets[i].text + "'");
+                    console.log("Tweeted on " + tweets[i].created_at); 
+                    }
+                }
+    });
 }
 
 function imdbData(){
-request("http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
+    request("http://www.omdbapi.com/?t=" + input + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
 
-  // If the request is successful (i.e. if the response status code is 200)
-  if (!error && response.statusCode === 200) {
-
-    // Parse the body of the site and recover just the imdbRating
-    // (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-    let flick = JSON.parse(body);
-    console.log(flick.Title, flick.Year, flick.imdbRating, flick.Ratings[1].Value, flick.Country,
-        flick.Language, flick.Plot, flick.Actors);
-  }
-});
+    // If the request is successful (i.e. if the response status code is 200)
+        if (!error && response.statusCode === 200) {
+            let flick = JSON.parse(body);
+                console.log("---------------------------------");
+                console.log("Title: " + flick.Title);
+                console.log("---------------------------------");
+                console.log("Release Date: " + flick.Year);
+                console.log("---------------------------------");
+                console.log("IMDB Rating: " + flick.imdbRating);
+                console.log("---------------------------------");
+                console.log("Rotton Tomatoes Rating: " + flick.Ratings[1].Value);
+                console.log("---------------------------------");
+                console.log("Produced in: " + flick.Country);
+                console.log("---------------------------------");
+                console.log("Language: " + flick.Language);
+                console.log("---------------------------------");
+                console.log("Synopsis: " + flick.Plot);
+                console.log("---------------------------------");
+                console.log("Cast: " + flick.Actors);
+                console.log("---------------------------------");
+            }
+        });
 }
 
 function machineOverlord(){
-fs.readFile("random.txt", "utf8", function(error, data) {
+    fs.readFile("random.txt", "utf8", function(error, data) {
+    //console.log(data);
+        let dataArr = data.split(",");
+        //console.log(dataArr);
 
-    console.log(data);
-    var dataArr = data.split(",");
-      console.log(dataArr);
-
-if(dataArr[0] === "spotify-this-song"){
-input = dataArr[1];
-spotifySearch();
-}
-
-  });
+            if(dataArr[0] === "spotify-this-song"){
+                input = dataArr[1];
+                    spotifySearch();
+            }
+    });
 }
